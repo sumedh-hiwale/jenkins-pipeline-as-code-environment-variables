@@ -1,63 +1,66 @@
 # 🚀 Jenkins Pipeline as Code - Environment Variables
 
-## 🎯 Objective
+## 📌 Objective
 
-Demonstrate the use of:
+Jenkins Declarative Pipeline mein:
 
-- Jenkins Predefined Environment Variables
-- Pipeline-Level Environment Variables
-- Stage-Level Environment Variables
-- Variable Scope in Declarative Pipeline
+* ✅ Jenkins Predefined Environment Variables use karna
+* ✅ Pipeline-Level Custom Environment Variables create karna
+* ✅ Stage-Level Environment Variables create karna
+* ✅ Variable Scope ko verify karna
 
 ---
 
 ## 📋 Prerequisites
 
-- Jenkins Server Running
-- Existing Pipeline Job: `Pipeline-as-code-Hello-world`
+Before starting, ensure:
+
+* 🖥️ Jenkins Server is running
+* 📂 Existing Pipeline Job: **Pipeline-as-code-Hello-world**
+* 👤 Jenkins user has permission to configure and build jobs
 
 ---
 
 # 🧪 Demo 1: Jenkins Predefined Environment Variable
 
-## 📝 Steps
+## 🔧 Steps
 
 1. Open Jenkins Dashboard.
-2. Open **Pipeline-as-code-Hello-world**.
+2. Open **Pipeline-as-code-Hello-world** job.
 3. Click **Configure**.
-4. In the **Pipeline** section, add:
+4. In the Pipeline section, add the following code:
 
 ```groovy
 pipeline {
-    agent any
+   agent any
 
-    stages {
-        stage('Run a Command') {
-            steps {
-                sh 'date'
-                sh 'ls'
-                sh 'pwd'
-            }
-        }
+   stages {
+       stage('Run a Command') {
+           steps {
+               sh 'date'
+               sh 'ls'
+               sh 'pwd'
+           }
+       }
 
-        stage('Environment Variable') {
-            steps {
-                sh 'echo "${BUILD_ID}"'
-            }
-        }
+       stage('Environment Variable') {
+           steps {
+               sh 'echo "${BUILD_ID}"'
+           }
+       }
 
-        stage('Deploy on test') {
-            steps {
-                echo 'Deploy on test1'
-            }
-        }
+       stage('Deploy on test') {
+           steps {
+               echo 'Deploy on test1'
+           }
+       }
 
-        stage('Deploy on prod') {
-            steps {
-                echo 'Deploy on prod1'
-            }
-        }
-    }
+       stage('Deploy on prod') {
+           steps {
+               echo 'Deploy on prod1'
+           }
+       }
+   }
 }
 ```
 
@@ -74,68 +77,52 @@ pipeline {
 7
 ```
 
----
+### 🔍 Verification
 
-## 🔍 Verification
-
-- Jenkins predefined variable `BUILD_ID` is displayed successfully.
+* Jenkins predefined variable **BUILD_ID** is displayed successfully.
 
 ---
 
 # 🧪 Demo 2: Create a Pipeline-Level Environment Variable
 
-## 🔄 Changes Made
+## 🔧 Changes Made
 
-### Before
-
-```groovy
-pipeline {
-    agent any
-
-    stages {
-```
-
-### After
+### Add Pipeline-Level Environment Block
 
 ```groovy
 pipeline {
-    agent any
+   agent any
 
-    environment {
-        name = 'sumedh'
-    }
+   environment {
+       name = 'sumedh'
+   }
 
-    stages {
+   stages {
 ```
 
-### Before
+### Update Environment Variable Stage
 
 ```groovy
 stage('Environment Variable') {
-    steps {
-        sh 'echo "${BUILD_ID}"'
-    }
-}
-```
-
-### After
-
-```groovy
-stage('Environment Variable') {
-    steps {
-        sh 'echo "${BUILD_ID}"'
-        sh 'echo "${name}"'
-    }
+   steps {
+       sh 'echo "${BUILD_ID}"'
+       sh 'echo "${name}"'
+   }
 }
 ```
 
 ---
 
-## 📝 Steps
+## ▶️ Steps
 
 1. Open **Configure**.
 2. Add the pipeline-level environment block.
-3. Add `echo "${name}"` in the **Environment Variable** stage.
+3. Add:
+
+```groovy
+sh 'echo "${name}"'
+```
+
 4. Click **Save**.
 5. Click **Build Now**.
 6. Open **Console Output**.
@@ -152,43 +139,31 @@ stage('Environment Variable') {
 sumedh
 ```
 
----
+### 🔍 Verification
 
-## 🔍 Verification
-
-- `BUILD_ID` is displayed.
-- Custom variable `name` is displayed successfully.
+* ✅ BUILD_ID is displayed.
+* ✅ Custom variable **name** is displayed successfully.
 
 ---
 
 # 🧪 Demo 3: Verify Pipeline-Level Variable Scope
 
-## 🔄 Changes Made
+## 🔧 Changes Made
 
-### Before
-
-```groovy
-stage('Deploy on test') {
-    steps {
-        echo 'Deploy on test1'
-    }
-}
-```
-
-### After
+Update **Deploy on test** stage:
 
 ```groovy
 stage('Deploy on test') {
-    steps {
-        echo 'Deploy on test1'
-        sh 'echo "${name}"'
-    }
+   steps {
+       echo 'Deploy on test1'
+       sh 'echo "${name}"'
+   }
 }
 ```
 
 ---
 
-## 📝 Steps
+## ▶️ Steps
 
 1. Open **Configure**.
 2. Add:
@@ -197,7 +172,7 @@ stage('Deploy on test') {
 sh 'echo "${name}"'
 ```
 
-inside **Deploy on test** stage.
+inside Deploy on test stage.
 
 3. Click **Save**.
 4. Click **Build Now**.
@@ -214,82 +189,60 @@ Deploy on test1
 sumedh
 ```
 
----
+### 🔍 Verification
 
-## 🔍 Verification
-
-- Variable `name` is accessible in another stage.
-- Pipeline-level variables are available throughout the pipeline.
+* ✅ Variable **name** is accessible in another stage.
+* ✅ Pipeline-level variables are available throughout the pipeline.
 
 ---
 
 # 🧪 Demo 4: Create a Stage-Level Environment Variable
 
-## 🔄 Changes Made
+## 🔧 Changes Made
 
-### Before
-
-```groovy
-stage('Environment Variable') {
-    steps {
-        sh 'echo "${BUILD_ID}"'
-        sh 'echo "${name}"'
-    }
-}
-```
-
-### After
+### Add Stage-Level Environment Block
 
 ```groovy
 stage('Environment Variable') {
 
-    environment {
-        username = 'myusername'
-    }
+   environment {
+       username = 'myusername'
+   }
 
-    steps {
-        sh 'echo "${BUILD_ID}"'
-        sh 'echo "${name}"'
-        sh 'echo "${username}"'
-    }
+   steps {
+       sh 'echo "${BUILD_ID}"'
+       sh 'echo "${name}"'
+       sh 'echo "${username}"'
+   }
 }
 ```
 
-### Before
+### Update Deploy on Test Stage
 
 ```groovy
 stage('Deploy on test') {
-    steps {
-        echo 'Deploy on test1'
-        sh 'echo "${name}"'
-    }
-}
-```
-
-### After
-
-```groovy
-stage('Deploy on test') {
-    steps {
-        echo 'Deploy on test1'
-        sh 'echo "${name}"'
-        sh 'echo "${username}"'
-    }
+   steps {
+       echo 'Deploy on test1'
+       sh 'echo "${name}"'
+       sh 'echo "${username}"'
+   }
 }
 ```
 
 ---
 
-## 📝 Steps
+## ▶️ Steps
 
 1. Open **Configure**.
-2. Add the following stage-level variable inside the **Environment Variable** stage:
+2. Add stage-level variable:
 
 ```groovy
 environment {
-    username = 'myusername'
+   username = 'myusername'
 }
 ```
+
+inside Environment Variable stage.
 
 3. Add:
 
@@ -297,7 +250,7 @@ environment {
 sh 'echo "${username}"'
 ```
 
-inside **Deploy on test** stage.
+inside Deploy on test stage.
 
 4. Click **Save**.
 5. Click **Build Now**.
@@ -320,7 +273,7 @@ sumedh
 myusername
 ```
 
-### Deploy on test Stage
+### Deploy on Test Stage
 
 ```bash
 + echo sumedh
@@ -330,10 +283,13 @@ sumedh
 ```
 
 ---
-## final code
- 
-    pipeline {
+
+# 🏁 Final Pipeline Code
+
+```groovy
+pipeline {
     agent any
+
     environment {
         name = 'sumedh'
     }
@@ -346,23 +302,27 @@ sumedh
                 sh 'pwd'
             }
         }
+
         stage('Environment Variable') {
             environment {
                 username = 'myusername'
             }
+
             steps {
                 sh 'echo "${BUILD_ID}"'
                 sh 'echo "${name}"'
                 sh 'echo "${username}"'
             }
         }
+
         stage('Deploy on test') {
             steps {
                 echo 'Deploy on test1'
                 sh 'echo "${name}"'
-                sh 'echo "${username}"' 
+                sh 'echo "${username}"'
             }
         }
+
         stage('Deploy on prod') {
             steps {
                 echo 'Deploy on prod1'
@@ -370,50 +330,38 @@ sumedh
         }
     }
 }
+```
 
 ---
 
-## 🔍 Verification
+# 🎯 Final Verification
 
-- `name` is available in all stages.
-- `username` is available only in the **Environment Variable** stage.
-- `username` is not available in the **Deploy on test** stage.
-- Blank output confirms the variable is out of scope.
+| Variable | Scope              | Available In                    |
+| -------- | ------------------ | ------------------------------- |
+| BUILD_ID | Jenkins Predefined | Entire Pipeline                 |
+| name     | Pipeline-Level     | All Stages                      |
+| username | Stage-Level        | Only Environment Variable Stage |
 
----
+### 📌 Result
 
-# 📊 Variable Scope Summary
+✅ **name** is available in all stages.
 
-| Variable | Type | Scope |
-|-----------|---------|---------|
-| `BUILD_ID` | Jenkins Predefined | Entire Pipeline |
-| `name` | Pipeline-Level Variable | All Stages |
-| `username` | Stage-Level Variable | Specific Stage Only |
+✅ **username** is available only inside the **Environment Variable** stage.
 
----
-
-# 🎓 Key Learning
-
-✅ Jenkins provides built-in environment variables such as `BUILD_ID`
-
-✅ Pipeline-level variables are available across all stages
-
-✅ Stage-level variables are available only within the stage where they are declared
-
-✅ Accessing a stage-level variable outside its scope returns an empty value
-
-✅ Environment variables help manage reusable values across Jenkins Pipelines
+✅ Blank output in the **Deploy on test** stage confirms that **username** is out of scope.
 
 ---
 
-# 🏆 Conclusion
+# 📚 Key Learnings
 
-In this demo, we successfully:
+* 🔹 Jenkins provides predefined environment variables like `BUILD_ID`.
+* 🔹 Pipeline-level variables are globally accessible throughout the pipeline.
+* 🔹 Stage-level variables are limited to their respective stage.
+* 🔹 Environment blocks help manage configuration cleanly and securely.
+* 🔹 Understanding variable scope is essential for writing maintainable Jenkins pipelines.
 
-- Used Jenkins predefined variables
-- Created custom pipeline-level variables
-- Created custom stage-level variables
-- Verified variable scope behavior
-- Understood the difference between pipeline-level and stage-level environment variables
+---
 
-🚀 This demonstrates how Environment Variables work in Jenkins Declarative Pipelines using Pipeline as Code.
+## 🎉 Conclusion
+
+In this lab, we successfully explored Jenkins Environment Variables by using predefined variables, creating custom pipeline-level variables, and defining stage-level variables. We also verified how variable scope works within Declarative Pipelines, making pipeline configurations more organized and manageable.
